@@ -1,2 +1,2 @@
 # MinusculoPHP
-A micro PHP MVC framework including login with access permissions and form validation.
+A micro PHP MVC framework including login with access level control and form validation.
