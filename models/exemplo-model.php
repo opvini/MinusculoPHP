@@ -5,7 +5,7 @@ class ExemploModel extends MinModel
 	
 	public $form;
 		
-	public function recebe_form()
+	public function recebeForm()
 	{
 	
 	  $this->form = new MinForm();	
