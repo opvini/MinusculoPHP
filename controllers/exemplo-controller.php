@@ -36,7 +36,7 @@ class ExemploController extends MinController
 
 		//$this->load_view('exemplo');
 
-		$this->talk->show_talk(3);
+		$this->talk->show_message(3);
     }
 	
 	

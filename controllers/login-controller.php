@@ -64,13 +64,13 @@ class LoginController extends MinController
 	  {	
 	  	
 		if ( $this->app->login( $this->form->getValue('user') , $this->form->getValue('pass') ) )
-			$this->talk->show_talk(0);
+			$this->talk->show_message(0);
 		else
-			$this->talk->show_talk(1);
+			$this->talk->show_message(1);
 		
 	  }
 	  else
-	  	print $this->talk->show_talk(2);
+	  	print $this->talk->show_message(2);
 	  
 	  			
     } // index()
@@ -79,7 +79,7 @@ class LoginController extends MinController
 	public function logout()
 	{
 		$this->app->logout();
-		$this->talk->show_talk(3);
+		$this->talk->show_message(3);
 	}
 		
 	
@@ -95,12 +95,12 @@ class LoginController extends MinController
 		if($token != "")
 		{
 			if( $this->app->login_with_token($token) )
-				$this->talk->show_talk(0);
+				$this->talk->show_message(0);
 			else
-				$this->talk->show_talk(4);
+				$this->talk->show_message(4);
 		}
 		else
-			$this->talk->show_talk(5);
+			$this->talk->show_message(5);
 			
 	} // token()
 		
