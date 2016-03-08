@@ -4,7 +4,7 @@
 class LoginTalk extends MinTalk
 {
 
-  public $talk = array(
+  public $message = array(
   
 	'pt-br' => array(
 	  0 => "Login efetuado com sucesso.",
