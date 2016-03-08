@@ -16,10 +16,10 @@ class ExemploController extends MinController
 		$this->title = 'MinusculoPHP Exemplo - index';
 	
 		// Carrega e instancia o modelo
-		$this->modelo = $this->load_model('exemplo');
+		$this->modelo = $this->loadModel('exemplo');
 		
 		// Carrega o arquivo do view 
-        $this->load_view('exemplo-view.php');
+        $this->loadView('exemplo-view.php');
 		
     }
 
@@ -31,26 +31,26 @@ class ExemploController extends MinController
 		$this->title = 'MinusculoPHP Exemplo Metodo Uai';
 	
 		// Carrega o modelo
-		$this->modelo = $this->load_model('exemplo');
-		$this->modelo->recebe_form();		
+		$this->modelo = $this->loadModel('exemplo');
+		$this->modelo->recebeForm();		
 
 		//$this->load_view('exemplo');
 
-		$this->talk->show_message(3);
+		$this->talk->showMessage(3);
     }
 	
 	
 	// método caso o usuário não tenha permissão para a ação desejada
-	public function sem_permissao( $modulo, $acao )
+	public function semPermissao( $modulo, $acao )
 	{
-		echo '{"success": false, "msg":"sem permissao"}';		
+		$this->talk->showMessage(0);		
 	}
 	
 	
 	// exemplo do plugin MinMakeCRUD
 	public function makeCrud(){
 		
-		$CRUD = $this->load_plugin('MinMakeCrud');
+		$CRUD = $this->loadPlugin('MinMakeCrud');
 		
 		
 		// array com campos a serem exibidos na tabela de visualizacao
