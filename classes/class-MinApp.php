@@ -45,11 +45,11 @@
 //
 //// LOGIN:
 // login(user, pass)
-// check_login()
+// checkLogin()
 // logout()
 // finalizar()
-// login_with_token()
-// delete_token()
+// loginWithToken()
+// deleteToken()
 //
 //// MÓDULO PESSOA FÍSICA:
 // salva_pf(array_dados)
@@ -91,8 +91,8 @@ class MinApp{
 			if( $sql->rowCount() > 0 )
 			{	
 				$this->user = $sql->fetchObject();	
-				$this->load_user_data();		
-				$this->set_logado($user, $pass);
+				$this->loadUserData();		
+				$this->setLogado($user, $pass);
 				return true;
 			}
 			else return false;
@@ -103,7 +103,7 @@ class MinApp{
 	
 	////// carrega todos os dados para user
 	//
-	private function load_user_data()
+	private function loadUserSata()
 	{
 		$sql = $this->db->query("SELECT 
 									  U.Id, UT.descricao as tipo_usuario, U.fgk_tipo as tipo_id, U.usuario, PF.nome,
@@ -124,21 +124,21 @@ class MinApp{
 	}
 	
 
-	private function set_logado($user, $pass){
+	private function setLogado($user, $pass){
 		$_SESSION["user"] = $user;
 		$_SESSION["pass"] = $pass;
 		$_SESSION["when"] = time(); 
 		$this->logado 	  = 1;
 	}
 		
-	private function reset_sessions(){
+	private function resetSessions(){
 		unset($_SESSION["user"]);
 		unset($_SESSION["pass"]);
 		unset($_SESSION["when"]);
 	}	
 
 
-	public function check_login()
+	public function checkLogin()
 	{	
 		if( isset($_SESSION["when"]) && ( time()-$_SESSION["when"] < LOGIN_TIMEOUT )  )
 			if( isset($_SESSION["user"]) && isset($_SESSION["pass"]) && $this->login($_SESSION["user"], $_SESSION["pass"]) ) return true;
@@ -147,7 +147,7 @@ class MinApp{
 	}
 	
 	public function logout(){
-		$this->reset_sessions();
+		$this->resetSessions();
 		$this->logado = 0;
 	}
 	
@@ -157,7 +157,7 @@ class MinApp{
 	}
 	
 
-	public function check_permissao( $modulo, $acao )
+	public function checkPermissao( $modulo, $acao )
 	{	
 	
 		// arquivo com as permissões para cada ação
@@ -232,7 +232,7 @@ class MinApp{
 	
 		
 	// login através de um token
-	public function login_with_token( $token="" )
+	public function loginWithToken( $token="" )
 	{
 		if( $this->db->is_conected() )
 		{
@@ -255,7 +255,7 @@ class MinApp{
 	}
 	
 	// exclui um token
-	public function delete_token( $token="" )
+	public function deleteToken( $token="" )
 	{
 		if( $this->db->is_conected() )
 		{
@@ -277,17 +277,17 @@ class MinApp{
 
 	/////////////////////////////////////////////// MODULO ENDEREÇOS
 	
-	public function salva_endereco($arr_dados)
+	public function salvaEndereco($arr_dados)
 	{	
 		$this->save($arr_dados,"endereco");
 	}
 	
-	public function delete_endereco($id,$arr_dados)
+	public function deleteEndereco($id,$arr_dados)
 	{	
 		$this->del($id,"endereco");
 	}
 		
-	public function carrega_enderecos($arr_dados, $start=0, $limit=0)
+	public function carregaEnderecos($arr_dados, $start=0, $limit=0)
 	{
 		return $this->view($arr_dados,"endereco", $start, $limit);
 	}
@@ -298,17 +298,17 @@ class MinApp{
 	
 	/////////////////////////////////////////////// MODULO PESSOA FÍSICA
 	
-	public function salva_pf($arr_dados)
+	public function salvaPf($arr_dados)
 	{	
 		$this->save($arr_dados,"pessoa_fisica");
 	}
 	
-	public function delete_pf($id,$arr_dados)
+	public function deletePf($id,$arr_dados)
 	{	
 		$this->del($id,"pessoa_fisica");
 	}
 		
-	public function carrega_pf($arr_dados, $start=0, $limit=0)
+	public function carregaPf($arr_dados, $start=0, $limit=0)
 	{
 		return $this->view($arr_dados,"pessoa_fisica", $start, $limit);
 	}

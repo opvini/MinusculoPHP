@@ -68,32 +68,42 @@ class MinTalk
 	{
 	}
   
-	public function set_message($id, $str)
+	public function setMessage($id, $str)
 	{
 		if( isset($this->message[LANGUAGE] ) )  $this->message[LANGUAGE][$id] = $str;
-		else								  $this->message[$id] = $str;
+		else								  	$this->message[$id] = $str;
 	}
 	
-	public function get_message($id)
+	public function getMessage($id)
 	{
 		if( isset($this->message[LANGUAGE][$id]) ) 	return $this->message[LANGUAGE][$id];
-		else if( isset($this->message[$id]) )			return $this->message[$id];
+		else if( isset($this->message[$id]) )		return $this->message[$id];
 	}
 	
-	public function get_all_messages()
+	public function getAllMessages()
 	{
 	}
 	
-	public function show_message($id)
+	public function success($id)
 	{
-		echo $this->get_message($id);
+		echo $this->getMessage($id);
 	}
 	
-	public function show_all_messages()
+	public function error($id)
+	{
+		echo $this->getMessage($id);
+	}
+	
+	public function showMessage($id)
+	{
+		echo $this->getMessage($id);
+	}
+	
+	public function showAllMessages()
 	{
 	}
 	
  
-} // Mintalk
+} // MinTalk
 
 ?>

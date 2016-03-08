@@ -42,7 +42,7 @@ class MinController
 		$this->db  = new MinConexaoCRUD();
 		$this->app = new MinApp( $this->db );
 		
-		$this->app->check_login();
+		$this->app->checkLogin();
 	}
 	
 	
@@ -59,12 +59,12 @@ class MinController
 		// verifica se o usuário tem permissão
 		// para a ação deste módulo que está tentando executar
 		// configurado em permissoes.php e no banco
-		$tmp_per = $this->app->check_permissao( $this->controllerName, $this->acao );
+		$tmp_per = $this->app->checkPermissao( $this->controllerName, $this->acao );
 
 		// executa o método caso tenha permissão e o método seja público
 		if( !is_callable( array($this, $acao) ))					require_once PG_404;
-		else if( is_callable( array($this, $acao) ) && $tmp_per )	$this->load_controller();
-		else if( method_exists($this, 'sem_permissao') )			$this->sem_permissao( $this->controllerName, $this->acao);
+		else if( is_callable( array($this, $acao) ) && $tmp_per )	$this->loadController();
+		else if( method_exists($this, 'semPermissao') )				$this->loadSemPermissao();
 		else														require_once PG_DANIED;
 
 	}
@@ -78,17 +78,24 @@ class MinController
 	// mais inteligentes
 	//
 	
+	
+	// carrega o método próprio de sem permissão
+	public function loadSemPermissao()
+	{
+		$this->talk = $this->loadTalks( $this->controllerName );
+		$this->semPermissao( $this->controllerName, $this->acao);
+	}
 
 	// carrega o controlador
-	public function load_controller()
+	public function loadController()
 	{
-		$this->talk = $this->load_talks( $this->controllerName );
+		$this->talk = $this->loadTalks( $this->controllerName );
 		$this->{$this->acao}();
 	}
 
 
 	// carrega o arquivo com erros do controller, caso exista
-	public function load_talks( $talk_file_name = false )
+	public function loadTalks( $talk_file_name = false )
 	{
 		if ( ! $talk_file_name ) return;
 
@@ -112,12 +119,12 @@ class MinController
 		}
 		else return new MinTalk;
 		
-	} // load_talks()
+	} // loadTalks()
 	
 	
 	
 	// carrega uma view
-	public function load_view( $view_name )
+	public function loadView( $view_name )
 	{
 		if ( ! $view_name ) return;
 
@@ -136,7 +143,7 @@ class MinController
 	// carrega o model correspondente passado pela URL com um simples include
 	// deve existir no diretório models
 	// é um include mais inteligente e já instancia a classe do modelo
-	public function load_model( $model_name = false )
+	public function loadModel( $model_name = false )
 	{
 		if ( ! $model_name ) return;
 
@@ -158,7 +165,7 @@ class MinController
 			
 			return;
 		}
-	} // load_model()
+	} // loadModel()
 	
 
 
@@ -166,7 +173,7 @@ class MinController
 
 	// carrega um plugin
 	// deve existir no diretório plugins
-	public function load_plugin( $plugin_name = false ) {
+	public function loadPlugin( $plugin_name = false ) {
 	
 		if ( ! $plugin_name ) return;
 
@@ -188,7 +195,7 @@ class MinController
 			
 			return;
 		}
-	} // load_plugin()
+	} // loadPlugin()
 	
 
  
