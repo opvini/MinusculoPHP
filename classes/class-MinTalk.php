@@ -13,9 +13,23 @@
 ///////////////////////////////////////////////////////////////////////
 
 
+/*
+
+emergency();
+alert();
+critical();
+error();
+warning();
+notice();
+info();
+debug();
+
+*/
+
+
 /******** EXEMPLO DE CONFIGURAÇÃO DE ERRO EM DIFERENTES LÍNGUAS
 
-  public $erro = array(
+  public $message = array(
   
 	'pt-br' => array(
 	  0 => "Esse é o erro zero",
@@ -23,8 +37,8 @@
 	),
 	
 	'en' => array(
-	  0 => "This is the talk zero",
-	  1 => "This is the talk onde"
+	  0 => "This is the message zero",
+	  1 => "This is the message onde"
 	)
 	
   );
@@ -47,35 +61,35 @@
 class MinTalk
 {
 	
-	public $talk = array();
+	public $message = array();
 	
 	
 	public function __construct()
 	{
 	}
   
-	public function set_talk($id, $str)
+	public function set_message($id, $str)
 	{
-		if( isset($this->talk[LANGUAGE] ) )  $this->talk[LANGUAGE][$id] = $str;
-		else								  $this->talk[$id] = $str;
+		if( isset($this->message[LANGUAGE] ) )  $this->message[LANGUAGE][$id] = $str;
+		else								  $this->message[$id] = $str;
 	}
 	
-	public function get_talk($id)
+	public function get_message($id)
 	{
-		if( isset($this->talk[LANGUAGE][$id]) ) 	return $this->talk[LANGUAGE][$id];
-		else if( isset($this->talk[$id]) )			return $this->talk[$id];
+		if( isset($this->message[LANGUAGE][$id]) ) 	return $this->message[LANGUAGE][$id];
+		else if( isset($this->message[$id]) )			return $this->message[$id];
 	}
 	
-	public function get_all_talks()
+	public function get_all_messages()
 	{
 	}
 	
-	public function show_talk($id)
+	public function show_message($id)
 	{
-		echo $this->get_talk($id);
+		echo $this->get_message($id);
 	}
 	
-	public function show_all_talks()
+	public function show_all_messages()
 	{
 	}
 	
