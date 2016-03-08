@@ -64,13 +64,13 @@ class LoginController extends MinController
 	  {	
 	  	
 		if ( $this->app->login( $this->form->getValue('user') , $this->form->getValue('pass') ) )
-			print '{"success":true, "msg": "Login efetuado com sucesso."}';
+			$this->talk->show_talk(0);
 		else
-			print '{"success":false, "errors": ["Erro #1: usuario ou senha invalidos."]}';
+			$this->talk->show_talk(1);
 		
 	  }
 	  else
-	  	print '{"success":false, "errors": ["Erro #2: existe um erro em seus campos."]}';
+	  	print $this->talk->show_talk(2);
 	  
 	  			
     } // index()
@@ -79,7 +79,7 @@ class LoginController extends MinController
 	public function logout()
 	{
 		$this->app->logout();
-		print '{"success":true, "msg": "Logout efetuado com sucesso"}';
+		$this->talk->show_talk(3);
 	}
 		
 	
@@ -95,12 +95,12 @@ class LoginController extends MinController
 		if($token != "")
 		{
 			if( $this->app->login_with_token($token) )
-				print '{"success":true, "msg": "Login efetuado com sucesso."}';
+				$this->talk->show_talk(0);
 			else
-				print '{"success":false, "errors": ["Erro #3: token invalido."]}';
+				$this->talk->show_talk(4);
 		}
 		else
-			print '{"success":false, "errors": ["Erro #4: token invalido."]}';
+			$this->talk->show_talk(5);
 			
 	} // token()
 		
