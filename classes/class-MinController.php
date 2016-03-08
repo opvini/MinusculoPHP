@@ -17,7 +17,7 @@ class MinController
  
 	public $db;
 	public $app;
-	public $error;
+	public $talk;
  	public $phpass;
 	
 	
@@ -72,7 +72,7 @@ class MinController
 	
 	
 	
-	/////////// CARREGA CONTROLLER, VIEW, MODEL E ERRORS
+	/////////// CARREGA CONTROLLER, VIEW, MODEL E talkS
 	// 
 	// são simples includes um pouco
 	// mais inteligentes
@@ -82,37 +82,37 @@ class MinController
 	// carrega o controlador
 	public function load_controller()
 	{
-		$this->error = $this->load_errors( $this->controllerName );
+		$this->talk = $this->load_talks( $this->controllerName );
 		$this->{$this->acao}();
 	}
 
 
 	// carrega o arquivo com erros do controller, caso exista
-	public function load_errors( $error_file_name = false )
+	public function load_talks( $talk_file_name = false )
 	{
-		if ( ! $error_file_name ) return;
+		if ( ! $talk_file_name ) return;
 
-		$error_file_name 	  =  strtolower( $error_file_name ).'-error';
-		$error_file_name_path = ABSPATH . '/errors/' . $error_file_name . '.php';
+		$talk_file_name 	  =  strtolower( $talk_file_name ).'-talk';
+		$talk_file_name_path = ABSPATH . '/talks/' . $talk_file_name . '.php';
 
-		if ( file_exists( $error_file_name_path ) )
+		if ( file_exists( $talk_file_name_path ) )
 		{			
-			require_once $error_file_name_path;
+			require_once $talk_file_name_path;
 			
-			$error_file_name = explode('/', $error_file_name);
-			$error_file_name = end( $error_file_name );
-			$error_file_name = preg_replace( '/[^a-zA-Z0-9]/is', '', $error_file_name );
+			$talk_file_name = explode('/', $talk_file_name);
+			$talk_file_name = end( $talk_file_name );
+			$talk_file_name = preg_replace( '/[^a-zA-Z0-9]/is', '', $talk_file_name );
 			
-			if ( class_exists( $error_file_name ) )
+			if ( class_exists( $talk_file_name ) )
  			{
-				return new $error_file_name();
+				return new $talk_file_name();
 			}
-			else return new MinError;
+			else return new MinTalk;
 
 		}
-		else return new MinError;
+		else return new MinTalk;
 		
-	} // load_errors()
+	} // load_talks()
 	
 	
 	
