@@ -64,7 +64,10 @@ class LoginController extends MinController
 	  {	
 	  	
 		if ( $this->app->login( $this->form->getValue('user') , $this->form->getValue('pass') ) )
+		{
 			$this->talk->showMessage(0);
+			echo ": sid=".session_id();
+		}
 		else
 			$this->talk->showMessage(1);
 		

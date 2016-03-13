@@ -19,7 +19,7 @@ class ExemploController extends MinController
 		$this->modelo = $this->loadModel('exemplo');
 		
 		// Carrega o arquivo do view 
-        $this->loadView('exemplo-view.php');
+        $this->loadView('exemplo');
 		
     }
 
