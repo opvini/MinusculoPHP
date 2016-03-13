@@ -91,8 +91,8 @@ class MinApp{
 			if( $sql->rowCount() > 0 )
 			{	
 				$this->user = $sql->fetchObject();	
-				$this->loadUserData();		
-				$this->setLogado($user, $pass);
+				$this->loadUserData( $this->user->Id );		
+				$this->setLogado( $this->user->Id );
 				return true;
 			}
 			else return false;
@@ -103,7 +103,7 @@ class MinApp{
 	
 	////// carrega todos os dados para user
 	//
-	private function loadUserSata()
+	private function loadUserData( $id )
 	{
 		$sql = $this->db->query("SELECT 
 									  U.Id, UT.descricao as tipo_usuario, U.fgk_tipo as tipo_id, U.usuario, PF.nome,
@@ -113,27 +113,27 @@ class MinApp{
 									  U.Id			  = ? AND									  
 									  U.fgk_pessoa    = PF.Id AND
 									  U.fgk_tipo	  = UT.Id;",
-								 array( $this->user->Id ));
+								 array( $id ));
 		
 		if( $sql->rowCount() > 0)
 		{	
 			// carrega dados
 			$this->user = $sql->fetchObject();
+			return true;
 		}
+		else return false;
 
 	}
 	
 
-	private function setLogado($user, $pass){
-		$_SESSION["user"] = $user;
-		$_SESSION["pass"] = $pass;
-		$_SESSION["when"] = time(); 
-		$this->logado 	  = 1;
+	private function setLogado($id){
+		$_SESSION["user_id"] = $id;
+		$_SESSION["when"]	 = time(); 
+		$this->logado 	  	 = 1;
 	}
 		
 	private function resetSessions(){
-		unset($_SESSION["user"]);
-		unset($_SESSION["pass"]);
+		unset($_SESSION["user_id"]);
 		unset($_SESSION["when"]);
 	}	
 
@@ -141,8 +141,15 @@ class MinApp{
 	public function checkLogin()
 	{	
 		if( isset($_SESSION["when"]) && ( time()-$_SESSION["when"] < LOGIN_TIMEOUT )  )
-			if( isset($_SESSION["user"]) && isset($_SESSION["pass"]) && $this->login($_SESSION["user"], $_SESSION["pass"]) ) return true;
-			else return false;
+		
+			if( isset($_SESSION["user_id"]) && $this->loadUserData( $_SESSION["user_id"] ) ) 
+			{
+				$this->setLogado($_SESSION["user_id"]);
+				return true;
+			}
+			else 
+				return false;
+		
 		else return false;
 	}
 	
@@ -219,15 +226,45 @@ class MinApp{
 		// caso não esteja, ele é tratado como módulo público
 		// caso esteja registrado, verifica se essa ação especificamente é pública
 		// ou seja, foi registrada em permissoes.php como 000 para o CRU
+		// caso não seja, verifica se foi passado um token via querystring
 		else
 		{
 			$sql = $this->db->query("SELECT * FROM modulo WHERE descricao = ?;", array( $modulo ) );
 			
 			if( $sql->rowCount() <= 0 )								return true;
 			else if($sql->rowCount() > 0 && $tmp_perm_min == 0)		return true;
+			else if( $this->checkTokenQueryString() )				return true;
+			else if( $this->checkSIDQueryString() )					return true;
 			else													return false;
 		}
 		
+	}
+	
+	
+	private function checkSIDQueryString()
+	{
+		$sid = ( isset($_GET['sid']) && trim( $_GET['sid'] ) != "" ) ? trim($_GET['sid']) : "";
+		if($sid != "")
+		{
+	      session_write_close();
+		  session_id($sid);
+		  session_start();
+		  
+		  $return = $this->checkLogin();
+		  session_regenerate_id();
+	  	  return $return;
+		  
+		}
+	}
+	
+	
+	private function checkTokenQueryString()
+	{
+		$token = ( isset($_GET['token']) && trim( $_GET['token'] ) != "" ) ? trim($_GET['token']) : "";
+		
+		if( $token == "" ) 							return false;
+		else if( $this->loginWithToken($token) )	return true;
+		else										return false;
 	}
 	
 		
