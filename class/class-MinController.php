@@ -68,10 +68,15 @@ class MinController
 		else														require_once PG_DANIED;
 		
 		// finaliza a aplicação
-		$this->app->finalizar();
+		$this->finalizar();
 		return true;
 	}
 	
+	private function finalizar()
+	{
+		$this->app->finalizar();
+		$this->db->desconect();
+	}
 	
 	
 	
