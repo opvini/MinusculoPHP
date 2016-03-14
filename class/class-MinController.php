@@ -66,7 +66,10 @@ class MinController
 		else if( is_callable( array($this, $acao) ) && $tmp_per )	$this->loadController();
 		else if( method_exists($this, 'semPermissao') )				$this->loadSemPermissao();
 		else														require_once PG_DANIED;
-
+		
+		// finaliza a aplicação
+		$this->app->finalizar();
+		return true;
 	}
 	
 	

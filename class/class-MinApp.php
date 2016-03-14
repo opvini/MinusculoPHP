@@ -159,7 +159,7 @@ class MinApp{
 	}
 	
 	public function finalizar(){
-		$this->conexao->desconect();
+		$this->db->desconect();
 		$this->logado = 0;
 	}
 	
