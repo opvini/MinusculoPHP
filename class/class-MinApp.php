@@ -168,7 +168,7 @@ class MinApp{
 	{	
 	
 		// arquivo com as permissões para cada ação
-		require_once 'permissoes.php';
+		require_once 'access.php';
 		
 		// permissão minima exigida
 		// verifica se tem permissão genérica para ação
