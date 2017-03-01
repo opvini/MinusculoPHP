@@ -35,7 +35,7 @@ function chk_array ( $array, $key )
 
 function __autoload($class_name)
 {
-	$file = ABSPATH . '/classes/class-' . $class_name . '.php';
+	$file = ABSPATH . '/class/class-' . $class_name . '.php';
 
 	if ( ! file_exists( $file ) ) {
 		require_once PG_404;
@@ -110,6 +110,45 @@ function json_show_ident( $json )
 {
 	return "<pre>\n" . json_ident( $json ) . "\n</pre>";
 }
+
+
+// exporta um array para um arqvuivo em excel
+function exportExcel($arr, $fil = "planilha.xls")
+{
+	$html = "<table><tr>";
+			
+	// insere os titulos
+	foreach( $arr[0] as $id => $value)
+		$html .= "<td>".$id."</td>";
+	
+	$html .= "</tr>";
+			
+	// varre as linhas
+	foreach( $arr as $id => $val)
+	{
+		$html .= "<tr>";
+		
+		// varre as colunas de cada linha
+		foreach( $arr[$id] as $id => $val)
+			$html .= "<td>".$val."</td>";
+		
+		$html .= "</tr>";
+	}
+	
+	$html .= "</table>";
+	
+	// Configurações header para forçar o download
+	header ("Expires: Mon, 04 Apr 2020 05:00:00 GMT");
+	header ("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
+	header ("Cache-Control: no-cache, must-revalidate");
+	header ("Pragma: no-cache");
+	header ("Content-type: application/x-msexcel");
+	header ("Content-Disposition: attachment; filename=\"{$fil}\"" );
+	header ("Content-Description: PHP Generated Data" );		
+  
+	echo $html;
+	
+} // exportExcel()
 
 
 

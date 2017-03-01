@@ -28,7 +28,7 @@
 /// HERDADO DA CLASSE MinCONEXAO
 //
 // query(): ver PDO
-// - $query->countRow()		total de resultados
+// - $query->rowCount()		total de resultados
 // - $query->fetch()		fetch de uma linha
 // - $query->fetchObject()	fetch de uma linha, retorna um objeto
 // - $query->fetchAll()		fetch de todas as linhas
@@ -71,7 +71,7 @@ class MinConexaoCRUD extends MinConexao
 	//
 	//
 	
-	public function save($arr_dados, $table)
+	public function save($table, $arr_dados)
 	{
 		//if( $this->is_conectado() && $this->logado )
 		//{			
@@ -122,9 +122,12 @@ class MinConexaoCRUD extends MinConexao
 			";
 			
 			if( $tmp_edit ) $arrPDO[] = $fieldId;
-						
+			
 			$tmp_id = $this->query($SQL, $arrPDO);
-			return $tmp_id;
+			
+			if($tmp_id) return $this->pdo->lastInsertId();
+			else		return 0;
+			
 		//}
 		//else return false;			
 	}
@@ -166,7 +169,7 @@ class MinConexaoCRUD extends MinConexao
 	//	);
 	//
 	
-	public function view($arr_dados, $table, $start=0, $limit=0)
+	public function view($table, $arr_dados, $start=0, $limit=0)
 	{
 
 		// definido no arquivo config

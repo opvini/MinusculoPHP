@@ -16,7 +16,7 @@
 // PUBLIC:
 //
 // query(): ver PDO
-// - $query->countRow()		total de resultados
+// - $query->rowCount()		total de resultados
 // - $query->fetch()		fetch de uma linha
 // - $query->fetchObject()	fetch de uma linha, retorna um objeto
 // - $query->fetchAll()		fetch de todas as linhas

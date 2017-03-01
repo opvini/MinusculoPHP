@@ -63,7 +63,7 @@ define( 'PERM_PUBLIC', 	0); // 000
 
 // Permissões genéricas (definidas para qualquer módulo)
 $_PERMS_ACAO = array(
-	"new" 		=> PERM_CREATE,
+	"create" 	=> PERM_CREATE,
 	"update" 	=> PERM_UPDATE,
 	"del" 		=> PERM_UPDATE,
 	"view" 		=> PERM_READ,
@@ -74,7 +74,7 @@ $_PERMS_ACAO = array(
 // Permissões exclusivas pertencenter a algum módulo
 $_PERMS = array(
 	"exemplo/index"		=> PERM_READ,
-	"exemplo/new" 		=> PERM_CREATE,
+	"exemplo/create"	=> PERM_CREATE,
 	"exemplo/update" 	=> PERM_UPDATE,
 	"exemplo/del" 		=> PERM_UPDATE,
 	"exemplo/view" 		=> PERM_READ,

@@ -7,7 +7,7 @@
 //
 // Criado por: Vinícius Nunes Lage
 // Criado em: 09/04/2015
-// Modificado em: 19/10/2015
+// Modificado em: 22/02/2017
 //
 //////////////////////////////////////////////////////////
 
@@ -38,14 +38,14 @@ class MinusculoPHP
 		// se o controlador não existe na URL, chama o controller HomeController e executa o metodo index
 		if ( ! $this->controlador ) 
 		{
-			require_once ABSPATH . '/controllers/home-controller.php';
+			require_once ABSPATH . '/components/home/home-controller.php';
 			$this->controlador = new HomeController('home');
 			$this->controlador->index();
 			return;
 		}
 		
 		// se existe o controlador na URL porém o arquivo não existe, exibe 404
-		if ( ! file_exists( ABSPATH . '/controllers/' . $this->controlador . '.php' ) )
+		if ( ! file_exists( ABSPATH . '/components/'. $this->controllerName .'/' . $this->controlador . '.php' ) )
 		{
 			require_once PG_404;
 			return;
@@ -54,7 +54,7 @@ class MinusculoPHP
 		
 		// se existe o controlador na URL, e o arquivo existe, carrega
 		// o arquivo tem padrao nome-controller.php
-		require_once ABSPATH . '/controllers/' . $this->controlador . '.php';
+		require_once ABSPATH . '/components/'. $this->controllerName .'/' . $this->controlador . '.php';
 		
 		// retira qualquer simbolo sem ser letras do nome do controlador
 		// para poder chamar a classe

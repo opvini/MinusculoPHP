@@ -13,11 +13,17 @@
 
 //**************************************
 //
+// setDefaultFilters($arr)
+//  adiciona filtros para todos os campos
+//
 // getAllValues():
 //  retorna um array do tipo arr[NOME_CAMPO] = VALOR  
 //
 // getAllValuesDB();
 //  retorna um array do tipo arr[DBFIELD] = VALOR 
+//
+// getValuesDB($arr);
+//  similar a getAllValuesDB, porém só retorna os campos desejados
 //
 // getValue($campo):
 //  retorna o valor do campo especificado
@@ -46,6 +52,9 @@
 // getFieldWithError($index):
 //  retorna o campo que contem erro de indice index
 //
+// getFieldsWithErros()
+//  retorna todos os campos que cotenham erros
+//
 // getTotErrorsByField($field):
 //  retorna o total de erros do campo field
 //
@@ -66,6 +75,7 @@
 // minlength
 // eqlength
 // equal
+// match
 // numeric
 // int
 // float
@@ -77,6 +87,7 @@
 // email
 //	
 /////////////// FILTERS	
+// concat
 // striptags
 // htmlentities
 // addslashes
@@ -97,6 +108,7 @@ class MinForm {
 	private $_defaultDateFormat;
 	private $_fields;
 	private $_arrAllFields;
+	private $_arrDefaultFilters;
 	private $_arrFieldsErrors;
 	private $_arrFieldsWithErrors;
 	private $_totErrors;
@@ -117,6 +129,7 @@ class MinForm {
 		$this->_fields				= array();
 		$this->_messages			= array();
 		$this->_arrAllFields		= array();
+		$this->_arrDefaultFilters	= array();
 		$this->_arrFieldsErrors		= array();
 		$this->_arrFieldsWithErrors = array();
 	}
@@ -158,6 +171,20 @@ class MinForm {
 		return $this->_arrAllFields;
 	}
 	
+
+	public function getValuesDB($arr)
+	{
+		$this->_arrAllFields = array();
+		
+		foreach( $arr as $type )
+		{
+			$this->_arrAllFields[$this->_fields[$type]["name"]]["dbfield"] = $this->_fields[$type]["dbfield"];
+			$this->_arrAllFields[$this->_fields[$type]["name"]]["value"]   = $this->_fields[$type]["value"];
+		}
+		
+		return $this->_arrAllFields;
+	}
+	
 		
 	public function getTotErrors()
     {
@@ -179,6 +206,13 @@ class MinForm {
     {
 		if(isset($this->_arrFieldsWithErrors[$index])) return $this->_arrFieldsWithErrors[$index];
     }
+	
+	public function getFieldsWithErros() {
+		$tmp = array();
+		for($i=0; $i<$this->getTotFieldsWithErros(); $i++)
+			$tmp[] = $this->getFieldWithError($i);
+		return $tmp;
+	}
 	
 	public function getTotErrorsByField($field){
 		if( isset($this->_arrFieldsErrors[$field]) ) return $this->_arrFieldsErrors[$field];
@@ -225,23 +259,51 @@ class MinForm {
 			}
 		}
 	}
+
+
+////////////////////////////////////////////////////////////////// adiciona filtros comuns a todos os campos
+	public function setDefaultFilters($arr)
+	{
+		$this->_arrDefaultFilters = $arr;
+	}
+
 	
 	
 	////////////////////////////////////////////////////////////////// recebe os campos e suas respectivas regras
-	public function add( /* $arrays fields */ )
+	public function add( $arr_fields )
 	{
-		$tot_args = func_num_args();
-		for($i=0;$i<$tot_args;$i++)
+		foreach ( $arr_fields as $field_name => $arr_data )
 		{
-			$arr_tmp = func_get_arg($i);	
-			if(!isset($arr_tmp["dbfield"])) $arr_tmp["dbfield"] = $arr_tmp["name"];
-			$this->_fields[$arr_tmp["name"]] = $arr_tmp;
+			if( !is_array($arr_data) ) {
+				
+				if( is_numeric($field_name) ) {
+					$field_name = $arr_data;
+					$arr_data   = array();
+				}
+				else {
+					$tmp_data			= $arr_data;
+					$arr_data 			= array();
+					$arr_data["value"]  = $tmp_data;
+				}
+				
+			}
+			
+			if( !isset($arr_data["filters"]) ) $arr_data["filters"] = array();
+			
+			$arr_tmp 		 	= $arr_data;	
+			$arr_tmp["name"] 	= $field_name;
+			$arr_tmp["filters"] = array_merge($arr_tmp["filters"], $this->_arrDefaultFilters);
+			
+			if(!isset($arr_tmp["dbfield"])) $arr_tmp["dbfield"] = $field_name;
+			$this->_fields[$field_name] = $arr_tmp;			
 		}
+		
 	}
 	
 	////////////////////////////////////////////////////////////////// verifica se o formulario eh valido
-	public function isValid()
+	public function isValid( $arr_fields = "" )
 	{
+		if($arr_fields != "") $this->add($arr_fields);
 		$this->receiveForm();
 		return $this->verifyRules();
 	}
@@ -289,11 +351,10 @@ class MinForm {
 		foreach( $this->_fields as $type => $value )
 		{
 			if(isset($value["filters"]))
-			{
+			{			  	
 			  foreach( $value["filters"] as $filter => $filter_value )
 			  {
-				  
-				  if( $this->checkRule( $filter, $filter_value, $value["value"], $type ) )
+				  if( $this->checkRule( $filter, $filter_value, $this->_fields[$type]["value"], $type ) )
 				  {
 				  }
 				  else
@@ -323,17 +384,22 @@ class MinForm {
 	{
 		switch(strtolower($filter))
 		{
+			case "concat"       :   $this->_fields[$element]["value"] = $this->_fields[$element]["value"].$filter_value;  return true;
+			
 			case "required"		:	return !(trim($value)=="");
 			case "maxlength"	:	return (strlen($value)<=$filter_value);
 			case "minlength"	:	return (strlen($value)>=$filter_value);
 			case "eqlength"		:	return (strlen($value)==$filter_value);	
 			case "equal"		:	return ($value==$filter_value);
+			case "match"		:	return ( $value == $this->_fields[$filter_value]["value"] );
 			case "numeric"		:	return is_numeric($value);
 			case "int"			:	return $this->isInt($value);	
-			case "float"		:	$v = (float) $value; return ((string)$v===(string)$value);
+			case "float"		:	$this->_fields[$element]["value"] = $value = str_replace(",",".",$value); $v = (float)$value;
+									return ((string)$v===(string)$value);
+									
 			case "min"			:	if($value<$filter_value) return false; 	break;
 			case "max"			:	if($value>$filter_value) return false; 	break;
-            case "email"        :   return preg_match("/^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9]+$/",$value,$m);
+            case "email"        :   return filter_var($value, FILTER_VALIDATE_EMAIL);
 			
 			case "date"         :   if($filter_value == true) return $this->isDate($value, $this->_defaultDateFormat); 
 									else return $this->isDate($value,$filter_value); 

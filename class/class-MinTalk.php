@@ -27,9 +27,9 @@ debug();
 */
 
 
-/******** EXEMPLO DE CONFIGURAÇÃO DE ERRO EM DIFERENTES LÍNGUAS
+/******** EXEMPLO DE CONFIGURAÇÃO DE ERRO EM DIFERENTES LÍNGUAS - exemplo-talk.php
 
-  public $message = array(
+  protectes $message = array(
   
 	'pt-br' => array(
 	  0 => "Esse é o erro zero",
@@ -61,48 +61,102 @@ debug();
 class MinTalk
 {
 	
-	public $message = array();
+	protected	$message = array();
+	private 	$talk	 = array();
+	private 	$msg	 = array();
+	private 	$item	 = array();
+	private		$success = true;
 	
 	
 	public function __construct()
 	{
 	}
-  
-	public function setMessage($id, $str)
+	
+	
+	
+	// addError() e addSuccess() se diferenciam apenas pelo resultado do "success"
+	// as mensagens de erro/sucesso estão salvas no diretório talks
+	
+	public function addError( $id )
 	{
-		if( isset($this->message[LANGUAGE] ) )  $this->message[LANGUAGE][$id] = $str;
-		else								  	$this->message[$id] = $str;
+		$this->addMsg(abs($id));
+		$this->success = false;
+		return $this;
 	}
 	
-	public function getMessage($id)
+	public function addSuccess( $id )
+	{
+		$this->addMsg($id);
+		$this->success = true;
+		return $this;
+	}
+	
+	
+	// adiciona uma mensagem dinâmica à resposta
+	// como por exemplo o SID do login
+	public function addMessage($arr)
+	{
+		$this->msg[] = $arr;
+		return $this;
+	}
+
+
+	// adiciona um item à resposta
+	public function addItem($arr)
+	{
+		$this->item = array_merge($this->item, $arr);
+		return $this;
+	}	
+	
+	
+	////////////////////////////////////////// MÉTODOS PRIVADOS
+	
+	private function addMsg($id)
+	{
+		$this->msg[] = $this->getMessage($id);
+	}
+	
+	
+	private function getMessage($id)
 	{
 		if( isset($this->message[LANGUAGE][$id]) ) 	return $this->message[LANGUAGE][$id];
 		else if( isset($this->message[$id]) )		return $this->message[$id];
 	}
 	
-	public function getAllMessages()
+	
+	private function renderTalk()
 	{
+		$this->talk = array(
+						 "success"  => $this->success,
+						 "lenguage" => LANGUAGE,
+						 "messages" => $this->msg
+		);
+		
+		$this->talk = array_merge($this->talk, $this->item);
 	}
 	
-	public function success($id)
+	
+	
+	
+	////////////////////////////////////////// RESPOSTAS
+	
+	
+	// retorna o array
+	public function response()
 	{
-		echo $this->getMessage($id);
+		$this->renderTalk();
+		return $this->talk;
 	}
 	
-	public function error($id)
+	
+	// retorna o JSON
+	public function show()
 	{
-		echo $this->getMessage($id);
+		$this->renderTalk();
+		echo json_encode($this->talk);
 	}
 	
-	public function showMessage($id)
-	{
-		echo $this->getMessage($id);
-	}
-	
-	public function showAllMessages()
-	{
-	}
-	
+		
  
 } // MinTalk
 

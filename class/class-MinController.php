@@ -7,16 +7,20 @@
 //
 // Criado por: Vinícius Nunes Lage
 // Criado em: 09/04/2015
-// Modificado em: 01/02/2016
+// Modificado em: 22/02/2017
 //
 /////////////////////////////////////////////////////////////////////////////
 
+//
+// Sempre cria uma instância $this->{ControllerName} carregando o Model, se existit
+//
+//
  
 class MinController
 {
  
 	public $db;
-	public $app;
+	public $login;
 	public $talk;
  	public $phpass;
 	
@@ -25,6 +29,7 @@ class MinController
 	// controller/acao/param1/param2...
 	
 	protected $controllerName;
+	protected $thisDir;
 	protected $acao;
  	protected $parametros = array();
 	
@@ -38,11 +43,12 @@ class MinController
 	public function __construct( $controllerName )
 	{
 		$this->controllerName = $controllerName;
+		$this->thisDir		  = ABSPATH . '/components/' . $this->controllerName . '/';
 		
-		$this->db  = new MinConexaoCRUD();
-		$this->app = new MinApp( $this->db );
+		$this->db    = new MinConexaoCRUD();
+		$this->login = new MinLogin( $this->db );
 		
-		$this->app->checkLogin();
+		$this->login->checkLogin();
 	}
 	
 	
@@ -59,7 +65,7 @@ class MinController
 		// verifica se o usuário tem permissão
 		// para a ação deste módulo que está tentando executar
 		// configurado em permissoes.php e no banco
-		$tmp_per = $this->app->checkPermissao( $this->controllerName, $this->acao );
+		$tmp_per = $this->login->checkPermissao( $this->controllerName, $this->acao );
 
 		// executa o método caso tenha permissão e o método seja público
 		if( !is_callable( array($this, $acao) ))					require_once PG_404;
@@ -72,9 +78,13 @@ class MinController
 		return true;
 	}
 	
+	
+	// finaliza a aplicação
+	// encerra a chamada de uma URL
+	
 	private function finalizar()
 	{
-		$this->app->finalizar();
+		$this->login->finalizar();
 		$this->db->desconect();
 	}
 	
@@ -98,6 +108,7 @@ class MinController
 	public function loadController()
 	{
 		$this->talk = $this->loadTalks( $this->controllerName );
+		$this->{$this->controllerName} = $this->loadModel($this->controllerName);
 		$this->{$this->acao}();
 	}
 
@@ -108,7 +119,7 @@ class MinController
 		if ( ! $talk_file_name ) return;
 
 		$talk_file_name 	  =  strtolower( $talk_file_name ).'-talk';
-		$talk_file_name_path = ABSPATH . '/talks/' . $talk_file_name . '.php';
+		$talk_file_name_path = $this->thisDir . $talk_file_name . '.php';
 
 		if ( file_exists( $talk_file_name_path ) )
 		{			
@@ -137,7 +148,7 @@ class MinController
 		if ( ! $view_name ) return;
 
 		$view_name =  strtolower( $view_name ).'-view';
-		$view_path = ABSPATH . '/views/' . $view_name . '.php';
+		$view_path = $this->thisDir . $view_name . '.php';
 				
 		if ( file_exists( $view_path ) )
 		{			
@@ -155,7 +166,7 @@ class MinController
 		if ( ! $model_name ) return;
 
 		$model_name =  strtolower( $model_name ).'-model';
-		$model_path = ABSPATH . '/models/' . $model_name . '.php';
+		$model_path = $this->thisDir . $model_name . '.php';
 
 		if ( file_exists( $model_path ) )
 		{			
@@ -167,43 +178,12 @@ class MinController
 			
 			if ( class_exists( $model_name ) )
  			{
-				return new $model_name( $this->db, $this->app );
+				return new $model_name( $this->db, $this->login );
 			}
 			
 			return;
 		}
-	} // loadModel()
-	
-
-
-
-
-	// carrega um plugin
-	// deve existir no diretório plugins
-	public function loadPlugin( $plugin_name = false ) {
-	
-		if ( ! $plugin_name ) return;
-
-		$plugin_name = strtolower( $plugin_name );
-		$plugin_path = ABSPATH . '/plugins/'.$plugin_name.'/'.$plugin_name.'.php';
-			
-		if ( file_exists( $plugin_path ) )
-		{		
-			require_once $plugin_path;
-			
-			$plugin_name = explode('/', $plugin_name);
-			$plugin_name = end( $plugin_name );
-			$plugin_name = preg_replace( '/[^a-zA-Z0-9]/is', '', $plugin_name );
-			
-			if ( class_exists( $plugin_name ) )
- 			{
-				return new $plugin_name();
-			}
-			
-			return;
-		}
-	} // loadPlugin()
-	
+	} // loadModel()	
 
  
 } // class MinController
