@@ -13,7 +13,7 @@ A micro PHP MVC framework including login with access level control, form valida
 - simple, objective and fast to create your own API;
 - usefull to distributed and embedded systems, like mobile APP's or Arduino and microcontroller systems;
 
-###MinusculoPHP is "minúsculo" (small in portuguese). It has less than 100kb;
+###MinusculoPHP is "minúsculo" (tiny in portuguese). It has less than 100kb;
 
 ##Contact
 
